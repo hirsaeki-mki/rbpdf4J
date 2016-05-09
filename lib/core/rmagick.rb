@@ -55,37 +55,55 @@ module Rbpdf
     
     # These are actually meant to return integer values But I couldn't seem to find anything saying what those values are.
     # So for now they return strings. The only place that uses this at the moment is the parsejpeg method, so I've changed that too.
-    case image.mime_type
-    when "image/gif"
-      out[2] = "GIF"
-    when "image/jpeg"
-      out[2] = "JPEG"
-    when "image/png"
-      out[2] = "PNG"
-    when " 	image/vnd.wap.wbmp"
-      out[2] = "WBMP"
-    when "image/x-xpixmap"
-      out[2] = "XPM"
+    # RMagick4J cannot support 'mime_type'. Use 'format'
+    if PLATFORM == 'java'
+      out[2] = image.format
+      case image.format
+      when "GIF"
+        out['mime'] = "image/gif"
+      when "JPEG"
+        out['mime'] = "image/jpeg"
+      when "PNG"
+        out['mime'] = "image/png"
+      when "WBMP"
+        out['mime'] = "image/vnd.wap.wbmp"
+      when "XPM"
+        out['mime'] = "image/x-xpixmap"
+      end
+    else
+      case image.mime_type
+      when "image/gif"
+        out[2] = "GIF"
+      when "image/jpeg"
+        out[2] = "JPEG"
+      when "image/png"
+        out[2] = "PNG"
+      when " 	image/vnd.wap.wbmp"
+        out[2] = "WBMP"
+      when "image/x-xpixmap"
+        out[2] = "XPM"
+      end
+      out['mime'] = image.mime_type
+      # This needs work to cover more situations
+      # I can't see how to just list the number of channels with ImageMagick / rmagick
+      ## RMagick4J cannot support colorspace.to_s and channel_depth. skip code
+      case image.colorspace.to_s.downcase
+      when 'cmykcolorspace'
+        out['channels'] = 4
+      when 'rgbcolorspace', 'srgbcolorspace' # Mac OS X : sRGBColorspace
+        if image.image_type.to_s == 'GrayscaleType' and image.class_type.to_s == 'PseudoClass'
+          out['channels'] = 0
+        else
+          out['channels'] = 3
+        end
+      when 'graycolorspace'
+          out['channels'] = 0
+      end
+
+      out['bits'] = image.channel_depth
+      
     end
     out[3] = "height=\"#{image.rows}\" width=\"#{image.columns}\""
-    out['mime'] = image.mime_type
-    
-    # This needs work to cover more situations
-    # I can't see how to just list the number of channels with ImageMagick / rmagick
-    case image.colorspace.to_s.downcase
-    when 'cmykcolorspace'
-      out['channels'] = 4
-    when 'rgbcolorspace', 'srgbcolorspace' # Mac OS X : sRGBColorspace
-      if image.image_type.to_s == 'GrayscaleType' and image.class_type.to_s == 'PseudoClass'
-        out['channels'] = 0
-      else
-        out['channels'] = 3
-      end
-    when 'graycolorspace'
-        out['channels'] = 0
-    end
-
-    out['bits'] = image.channel_depth
     
     out
   end
