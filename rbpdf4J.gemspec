@@ -4,19 +4,19 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'rbpdf/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "rbpdf"
+  spec.name          = "rbpdf4J"
   spec.version       = Rbpdf::VERSION
-  spec.authors       = ["NAITOH Jun"]
-  spec.email         = ["naitoh@gmail.com"]
-  spec.summary       = %q{RBPDF via TCPDF.}
-  spec.description   = %q{A template plugin allowing the inclusion of ERB-enabled RBPDF template files.}
+  spec.authors       = ["SAEKI Hiroshi"]
+  spec.email         = ["hirsaeki-mki@gmail.com"]
+  spec.summary       = %q{RBPDF4J via RBPDF.}
+  spec.description   = %q{A template plugin allowing the inclusion of ERB-enabled RBPDF template files. some customize for RMagick4J}
   spec.homepage      = ""
   spec.licenses      = ['MIT', 'LGPL 2.1 or later']
   spec.files         = Dir.glob("lib/rbpdf/version.rb") +
                        Dir.glob("lib/*.rb") +
                        Dir.glob("lib/core/rmagick.rb") +
                        Dir.glob("test/*") +
-                       ["Rakefile", "rbpdf.gemspec", "Gemfile",
+                       ["Rakefile", "rbpdf4J.gemspec", "Gemfile",
                         "CHANGELOG", "test_unicode.rbpdf", "README.md", "LICENSE.TXT", "MIT-LICENSE",
                         "utf8test.txt", "logo_example.png" ]
   spec.rdoc_options  += [ '--exclude', 'lib/fonts/',
